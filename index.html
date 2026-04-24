@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Placar de Bocha - Oficial</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
+    <link rel="manifest" href="imagens/site.webmanifest">
+</head>
+<body>
+
+<div class="tv-container">
+    
+    <div class="top-bar">
+        <div class="top-team top-red">
+            <span id="tvRedTeamName" class="flag">EQP 1</span> 
+            <div id="tvRedPlayers" class="player-name">JOGADOR VERMELHO</div>
+            <div class="team-logo-box">
+                <img id="tvRedLogo" class="team-logo" src="" alt="Logo">
+            </div>
+        </div>
+        <div class="top-center">
+            <span id="tvMatchTitle">BC1 - BOCHA</span>
+            <div class="center-score-divider"></div>
+        </div>
+        <div class="top-team top-blue">
+            <div class="team-logo-box">
+                <img id="tvBlueLogo" class="team-logo" src="" alt="Logo">
+            </div>
+            <span id="tvBlueTeamName" class="flag">EQP 2</span>
+            <div id="tvBluePlayers" class="player-name">JOGADOR AZUL</div>
+        </div>
+    </div>
+
+    <div class="main-scores">
+        <div class="side red-side">
+            <div class="score-number" id="scoreRed">0</div>
+            <div class="black-panel">
+                <div class="balls" id="ballsRed">
+                    <div class="ball"></div><div class="ball"></div><div class="ball"></div>
+                    <div class="ball"></div><div class="ball"></div><div class="ball"></div>
+                </div>
+                <div class="digital-timer" id="timerRedTV">00:00</div>
+            </div>
+        </div>
+
+        <div class="side blue-side">
+            <div class="score-number" id="scoreBlue">0 <span class="turn-dot"></span></div>
+            <div class="black-panel">
+                <div class="balls" id="ballsBlue">
+                    <div class="ball"></div><div class="ball"></div><div class="ball"></div>
+                    <div class="ball"></div><div class="ball"></div><div class="ball"></div>
+                </div>
+                <div class="digital-timer" id="timerBlueTV">00:00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="sets-won-display">
+            <div class="sets-won-team red-sets-won">
+                <span id="tvRedSetsWon">0</span>/<span id="tvTotalSets">4</span>
+            </div>
+            <div class="bottom-dots">
+                <div class="dark-dot"></div><div class="dark-dot"></div><div class="dark-dot"></div>
+                <div class="dark-dot"></div><div class="dark-dot"></div><div class="dark-dot"></div>
+            </div>
+            <div class="sets-won-team blue-sets-won">
+                <span id="tvBlueSetsWon">0</span>/<span id="tvTotalSetsBottom">4</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-container">
+    <h2>⚙️ Painel de Controle</h2>
+
+    <div class="config-bar">
+        <label>Tipo de Jogo: </label>
+        <select id="gameType" onchange="updatePlayerFields()">
+            <option value="1">Individual (1v1)</option>
+            <option value="2">Dupla (2v2)</option>
+            <option value="3">Trio (3v3)</option>
+            <option value="4">Quarteto (4v4)</option>
+        </select>
+        <label style="margin-left: 20px;">Sets para vencer: </label>
+        <select id="totalSets" onchange="updateSetConfig()">
+            <option value="1">1 Set</option>
+            <option value="2">2 Sets</option>
+            <option value="3">3 Sets</option>
+            <option value="4" selected>4 Sets</option>
+            <option value="5">5 Sets</option>
+        </select>
+        <button class="btn btn-danger" onclick="resetMatch()">Zerar Partida Completa</button>
+    </div>
+
+    <div class="team-config">
+        <h3>🏆 Configuração das Equipes</h3>
+        <div class="team-config-grid">
+            <div class="team-config-box red-team-config">
+                <h4>🔴 Equipe Vermelha</h4>
+                <input type="text" id="configRedTeamName" placeholder="Nome da Equipe" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configRedPlayer1" placeholder="Jogador 1" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configRedPlayer2" placeholder="Jogador 2" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configRedPlayer3" placeholder="Jogador 3" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configRedPlayer4" placeholder="Jogador 4" onchange="updateTeamConfig()">
+                <div class="logo-upload">
+                    <label>Logo: </label>
+                    <input type="text" id="configRedLogo" placeholder="Ou cole uma URL" onchange="updateTeamConfig()">
+                    <input type="file" id="configRedLogoFile" accept="image/*" onchange="handleLogoUpload('red')">
+                </div>
+            </div>
+            <div class="team-config-box blue-team-config">
+                <h4>🔵 Equipe Azul</h4>
+                <input type="text" id="configBlueTeamName" placeholder="Nome da Equipe" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configBluePlayer1" placeholder="Jogador 1" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configBluePlayer2" placeholder="Jogador 2" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configBluePlayer3" placeholder="Jogador 3" onchange="updateTeamConfig()">
+                <input type="text" class="player-field" id="configBluePlayer4" placeholder="Jogador 4" onchange="updateTeamConfig()">
+                <div class="logo-upload">
+                    <label>Logo: </label>
+                    <input type="text" id="configBlueLogo" placeholder="Ou cole uma URL" onchange="updateTeamConfig()">
+                    <input type="file" id="configBlueLogoFile" accept="image/*" onchange="handleLogoUpload('blue')">
+                </div>
+            </div>
+        </div>
+        <div class="match-info-config">
+            <input type="text" id="configMatchTitle" placeholder="Ex: J01 - FINAL - QUADRA 1 - 1ª ROD" onchange="updateTeamConfig()">
+            <button class="btn" onclick="saveTeamConfig()">💾 Salvar Configuração</button>
+        </div>
+    </div>
+
+    <div class="timers">
+        <div class="timer-config">
+            <label>⏱️ Tempo por Jogador (minutos): </label>
+            <input type="number" id="configTime" value="15" min="1" max="120" onchange="updateTimerConfig()">
+            <button class="btn" onclick="resetAllTimers()">🔄 Zerar Tempos</button>
+        </div>
+        <div class="timer-display">
+            <div class="timer-team red-timer">
+                <span>🔴 Vermelho: </span>
+                <span id="timerRed">00:00</span>
+            </div>
+            <div class="timer-controls">
+                <button class="btn" onclick="toggleTimer()">▶️ Iniciar/Pausar</button>
+                <button class="btn" onclick="switchTurn()">🔄 Trocar Turno</button>
+            </div>
+            <div class="timer-team blue-timer">
+                <span>🔵 Azul: </span>
+                <span id="timerBlue">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-grid">
+        <div class="control-box red-control">
+            <h3>🔴 CONTROLE VERMELHO</h3>
+            <button class="btn" onclick="changeScore('red', 1)">+1 Ponto</button>
+            <button class="btn" onclick="changeScore('red', -1)">-1 Ponto</button><br>
+            <button class="btn win-btn" onclick="winSet('red')">Venceu o Set</button>
+        </div>
+        
+        <div class="control-box center-control">
+            <h3>SETS VENCIDOS</h3>
+            <div class="sets-display">
+                <div id="redSets"></div>
+                <h2>SET: <span id="currentSet">1</span></h2>
+                <div id="blueSets"></div>
+            </div>
+        </div>
+
+        <div class="control-box blue-control">
+            <h3>🔵 CONTROLE AZUL</h3>
+            <button class="btn" onclick="changeScore('blue', 1)">+1 Ponto</button>
+            <button class="btn" onclick="changeScore('blue', -1)">-1 Ponto</button><br>
+            <button class="btn win-btn" onclick="winSet('blue')">Venceu o Set</button>
+        </div>
+    </div>
+
+    <div class="log-section">
+        <h3>📝 Registro de Lances</h3>
+        <div class="input-group">
+            <select id="logEquipe">
+                <option value="Equipe Vermelha">Equipe Vermelha</option>
+                <option value="Equipe Azul">Equipe Azul</option>
+            </select>
+            <input type="text" id="logJogador" placeholder="Nome do Jogador" size="15">
+            <input type="text" id="logAcao" placeholder="Ex: Fez lance perfeito, Sofreu penalidade..." size="40">
+            <button class="btn" onclick="addLog()">Registrar Lance</button>
+        </div>
+        
+        <table id="logTable">
+            <thead>
+                <tr>
+                    <th>Set</th>
+                    <th>Equipe</th>
+                    <th>Jogador</th>
+                    <th>Ação / Evento</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
