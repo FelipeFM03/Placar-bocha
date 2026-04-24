@@ -7,6 +7,13 @@ let blueSetsWon = 0;
 let redSetsWon = 0;
 let logsArray = []; 
 
+// Intervalo e Cronômetro Livre
+let intervalTime = 0;
+let intervalInterval = null;
+let cronometerTime = 0;
+let cronometerInterval = null;
+let isCronometerRunning = false;
+
 // Configuração de Sets
 let setConfig = {
     totalSets: 4,  // Sets necessários para vencer
@@ -296,16 +303,28 @@ function switchTurn() {
 }
 
 function updateTurnIndicator() {
-    // Remove indicador de todos os lados
+    // Remove indicador de todos os lados (TV)
     document.querySelectorAll('.side').forEach(side => {
         side.classList.remove('active-turn');
     });
     
-    // Adiciona indicador no time ativo
+    // Adiciona indicador no time ativo (TV)
     if (timerConfig.activeTeam) {
         const activeSide = document.querySelector(`.${timerConfig.activeTeam}-side`);
         if (activeSide) {
             activeSide.classList.add('active-turn');
+        }
+    }
+    
+    // Atualiza o timer-display no painel admin
+    document.querySelectorAll('.timer-team').forEach(team => {
+        team.classList.remove('active-turn');
+    });
+    
+    if (timerConfig.activeTeam) {
+        const activeTimer = document.querySelector(`.${timerConfig.activeTeam}-timer`);
+        if (activeTimer) {
+            activeTimer.classList.add('active-turn');
         }
     }
 }
@@ -477,4 +496,109 @@ function fillConfigFields() {
     if (setConfig && setConfig.totalSets) {
         document.getElementById('totalSets').value = setConfig.totalSets;
     }
+}
+
+// --- INTERVALO E CRONÔMETRO LIVRE ---
+function startInterval(minutes) {
+    // Pausa o timer principal se estiver rodando
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    
+    // Pausa o cronômetro livre se estiver rodando
+    if (cronometerInterval) {
+        clearInterval(cronometerInterval);
+        cronometerInterval = null;
+        isCronometerRunning = false;
+    }
+    
+    intervalTime = minutes * 60;
+    updateIntervalDisplay();
+    
+    // Exibe o intervalo no cronometer-display da TV
+    document.getElementById('tvCronometer').innerText = `INTERVALO - ${formatTime(intervalTime)}`;
+    
+    intervalInterval = setInterval(() => {
+        intervalTime--;
+        updateIntervalDisplay();
+        
+        if (intervalTime <= 0) {
+            clearInterval(intervalInterval);
+            intervalInterval = null;
+            showIntervalEnd();
+        }
+    }, 1000);
+}
+
+function updateIntervalDisplay() {
+    // Atualiza o cronometer-display com o tempo do intervalo
+    if (intervalInterval) {
+        document.getElementById('tvCronometer').innerText = `INTERVALO - ${formatTime(intervalTime)}`;
+    }
+}
+
+function showIntervalEnd() {
+    const overlay = document.getElementById('intervalOverlay');
+    overlay.style.display = 'flex';
+    
+    // Após 10 segundos, esconde o overlay
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        // Restaura o título original
+        document.getElementById('tvMatchTitle').innerText = teamConfig.matchTitle || "BC1 - BOCHA";
+    }, 10000);
+}
+
+function toggleCronometer() {
+    if (cronometerInterval) {
+        // Pausa o cronômetro
+        clearInterval(cronometerInterval);
+        cronometerInterval = null;
+        isCronometerRunning = false;
+    } else {
+        // Inicia o cronômetro livre
+        isCronometerRunning = true;
+        cronometerInterval = setInterval(() => {
+            cronometerTime++;
+            updateCronometerDisplay();
+        }, 1000);
+    }
+    saveState();
+}
+
+function updateCronometerDisplay() {
+    document.getElementById('tvCronometer').innerText = formatTime(cronometerTime);
+}
+
+function resetCronometer() {
+    // Para o cronômetro se estiver rodando
+    if (cronometerInterval) {
+        clearInterval(cronometerInterval);
+        cronometerInterval = null;
+    }
+    
+    // Zera o tempo
+    cronometerTime = 0;
+    isCronometerRunning = false;
+    
+    // Atualiza o display
+    updateCronometerDisplay();
+    saveState();
+}
+
+function resetCronometer() {
+    // Para o cronômetro se estiver rodando
+    if (cronometerInterval) {
+        clearInterval(cronometerInterval);
+        cronometerInterval = null;
+    }
+    
+    // Zera o tempo
+    cronometerTime = 0;
+    isCronometerRunning = false;
+    
+    // Atualiza o display
+    updateCronometerDisplay();
+    saveState();
 }
